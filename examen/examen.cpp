@@ -294,9 +294,9 @@ void sortByTitle(Source*& sources, size_t& count, const string& filename) {
         }
         file << sources[i].type.type << "," << sources[i].title << "," << sources[i].author << "," << sources[i].year << "," << sources[i].type.categore << endl;
     }
-
+    
     file.close();
-    cout << "Успішно!" << endl;
+    
 
 }
 
@@ -362,6 +362,7 @@ void CountKategory(Source*& sources, size_t& count, string category) {
         }
     }
     cout << "Кількість книг категорії " << category << " --> " << count1 << endl;
+    cout << endl;
 }
 
 
@@ -382,6 +383,8 @@ void removeGazete(Source*& sources, size_t& count, string year1, const string& f
 
     if (count1 == 0) {
         cout << "Газет із роком " << year1 << " не знайдено." << endl;
+
+
     }
     int k = 0;
     Source* newSources = new Source[count - count1];
@@ -416,6 +419,42 @@ void removeGazete(Source*& sources, size_t& count, string year1, const string& f
 
     
 }
+
+
+
+
+void vybirkaAvtorinazva(Source*& sources, size_t& count, string name, string avtor) {
+    for (size_t i = 0; i < count; ++i) {
+        if (toLoweCase(sources[i].type.type) == "книга") {
+            if (toLoweCase(sources[i].author) == toLoweCase(avtor) && toLoweCase(sources[i].title) == toLoweCase(name)) {
+                cout << "Індекс: " << i << endl;
+                cout << "Тип: " << sources[i].type.type << endl;
+                cout << "Назва: " << sources[i].title << endl;
+                cout << "Автор/Видавець: " << sources[i].author << endl;
+                cout << "Рік видання: " << sources[i].year << endl;
+                cout << "Категорія книжки: " << sources[i].type.categore << endl;
+                cout << "------------------------" << endl;
+            }
+
+        }
+    }
+}
+void vybirkaZhurnal(Source*& sources, size_t& count, string name) {
+    for (size_t i = 0; i < count; ++i) {
+        if (toLoweCase(sources[i].type.type) == "журнал") {
+            if (toLoweCase(sources[i].title) == toLoweCase(name)) {
+                cout << "Індекс: " << i << endl;
+                cout << "Тип: " << sources[i].type.type << endl;
+                cout << "Назва: " << sources[i].title << endl;
+                cout << "Автор/Видавець: " << sources[i].author << endl;
+                cout << "Рік видання: " << sources[i].year << endl;
+                cout << "Категорія книжки: " << sources[i].type.categore << endl;
+                cout << "------------------------" << endl;
+            }
+
+        }
+    }
+}
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
@@ -434,10 +473,11 @@ int main() {
         cout << "2. Переглянути всі джерела" << endl;
         cout << "3. Додати до бази даних" << endl;
         cout << "4. Видалити по індексу" << endl;
-        cout << "5. Сортувати за" << endl;
-        cout << "6. Вибірка" << endl;
-        cout << "7. Кількість книг деякої категорії" << endl;
+        cout << "5. Упорядкування по полях" << endl;
+        cout << "6. Пошук" << endl;
+        cout << "7. Вибірка" << endl;
         cout << "8. Кількість книг деякої категорії" << endl;
+        cout << "9. Видалення зведень про газети за певний рік" << endl;
 
 
 
@@ -451,12 +491,15 @@ int main() {
             cout << "Ведіть кількість нових записів: ";
             cin >> n1;
             addSource2(sources, count, capacity, filename, n1);
+            cout << endl;
             break;
         case 2:
             viewSources(sources, count);
+            cout << endl;
             break;
         case 3:
             addSource1(sources, count, capacity, filename);
+            cout << endl;
             break;
         case 4:
             viewSources(sources, count);
@@ -464,16 +507,22 @@ int main() {
             cout << "Ведіть ідекс: ";
             cin >> in;
             remove(sources, count, in, filename);
+            cout << endl;
             break;
+
         case 5:
             int in1;
             cout << "Виберіть як хочете сортувати 1 - по назві, 2 - по типу : ";
             cin >> in1;
             if (in1 == 1) {
                 sortByTitle(sources, count, filename);
+                viewSources(sources, count);
+                cout << endl;
             }
             else if (in1 == 2) {
                 sortByType(sources, count, filename);
+                viewSources(sources, count);
+                cout << endl;
 
             }
             else
@@ -482,7 +531,36 @@ int main() {
             }
             
             break;
-        case 6:
+
+        case 6: {
+            int in23;
+            cout << "Пошук: 1 - наявність заданої книги (відомі автор і назва), 2 - наявність заданого журналу: ";
+            cin >> in23;
+            if (in23 == 1) {
+                string name;
+                string author;
+                cout << "Ведіть назву книги : ";
+                cin >> name;
+                cout << "Ведіть автора книги : ";
+                cin >> author;
+                vybirkaAvtorinazva(sources, count, name, author);
+                cout << endl;
+            }
+            if (in23 == 2) {
+                string name1;
+          
+                cout << "Ведіть назву журнала : ";
+                cin >> name1;
+             
+                vybirkaZhurnal(sources, count, name1);
+                cout << endl;
+            }
+            
+            break;
+
+        }
+            
+        case 7:
             int in2;
             cout << "Виберіть як хочете вибірка 1 - книга певного жанру, 2 - книга певного автора, 3 - журнал певного року : ";
             cin >> in2;
@@ -491,34 +569,39 @@ int main() {
                 cout << "Ведіть певний жанр : ";
                 cin >> in3;
                 vybirkaKategory(sources, count, in3);
+                cout << endl;
             }
             else if (in2 == 2) {
                 string in4;
                 cout << "Ведіть певного автора : ";
                 cin >> in4;
                 vybirkaAvtor(sources, count, in4);
+                cout << endl;
             }
             else if (in2 == 3) {
                 string in5;
                 cout << "Ведіть рік за який хочете побачити журнали : ";
                 cin >> in5;
                 vybirkaRik(sources, count, in5);
+                cout << endl;
             }
             
             
             break;
-        case 7: {
+        case 8: {
             string inі7;
             cout << "Ведіть певний жанр : ";
             cin >> inі7;
             CountKategory(sources, count, inі7);
+            cout << endl;
             break;
         }
-        case 8: {
+        case 9: {
             string inі8;
-            cout << "Ведіть певний жанр : ";
+            cout << "Ведіть рік книжки: ";
             cin >> inі8;
             removeGazete(sources, count, inі8, filename);
+            cout << endl;
             break;
         }
         case 0:
